@@ -1,6 +1,6 @@
-# FPGA Device Interface
+# AUBoard AU15P Color Space Conversion Demo
 
-A template project for FPGA-based applications using XDMA for host-FPGA communication.
+Demo Project using the AUBoard AU15P to Change the Color Space of TPG Video.
 
 ## Prerequisites
 
@@ -43,12 +43,14 @@ sudo ./build/bin/AU15P_CSC2
 
 ```
 .
-├── main.c              # Main application code
-├── main.h              # Header file with common definitions
+├── main.c             # Main application code
+├── main.h             # Header file with common definitions
 ├── sc_libs/           # Custom library implementations
 │   ├── sc_io.c        # I/O operations implementation
 │   └── sc_io.h        # I/O operations interface
 ├── xlnx_libs/         # Xilinx library dependencies
 └── CMakeLists.txt     # Build configuration
+└── sdl_viewer/        # Project for Viewing Video
+    └── sdl_viewer.c   # Main Video Viewing Code 
 ```
 

@@ -222,10 +222,10 @@ int main()
     }
 
     printf("\n");
-    printf("                        AU15P CSC2\n");
-    printf("                 ------------------------------\n");
-    printf("                    Color Space Conversion v2.0\n");
-    printf("                 ------------------------------\n\n");
+    printf("                            AU15P CSC2\n");
+    printf("                 -------------------------------\n");
+    printf("                   Color Space Conversion v2.0\n");
+    printf("                 -------------------------------\n\n");
 
     printf("Version ID: 0x%08X\r\n", XGpio_DiscreteRead(&VersionCheck, 0x01));
 
