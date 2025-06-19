@@ -22,6 +22,9 @@ XGpio TpgReset;
 XV_tpg tpgInst;
 XV_tpg_Config *tpg_ConfigPtr;
 
+XVprocSs vprocInst;
+XVprocSs_Config *vproc_ConfigPtr;
+
 uint32_t TpgInit()
 {
     uint32_t status;
@@ -69,6 +72,11 @@ uint32_t TpgInit()
     printf("TPG Started! \r\n");
 
     return status;
+}
+
+uint32_t VProcInit()
+{
+
 }
 
 uint32_t Producer() {

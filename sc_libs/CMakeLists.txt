@@ -28,6 +28,20 @@ target_include_directories(sc_libs
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/tmrctr
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_tpg
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/video_common
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/axis_switch
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/axivdma
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_csc
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_deinterlacer
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_hcresampler
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_hscaler
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_letterbox
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_vcresampler
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_vscaler
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/vprocss
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/vprocss/vdma
+        
         ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 

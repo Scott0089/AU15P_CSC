@@ -20,6 +20,7 @@
 #include "xtmrctr.h"
 #include "xv_tpg.h"
 #include "xvidc.h"
+#include "xvprocss.h"
 
 /* Device configuration */
 #define TARGET_PHYS_ADDR 0x40000000

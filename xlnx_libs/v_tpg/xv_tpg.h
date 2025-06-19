@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 /***************************** Include Files *********************************/
-#ifndef __linux__dep
+#ifndef __linux__depdep
 #include "xil_types.h"
 #include "xil_assert.h"
 #include "xstatus.h"
@@ -33,7 +33,7 @@ extern "C" {
 #include "xv_tpg_hw.h"
 
 /**************************** Type Definitions ******************************/
-#ifdef __linux__dep
+#ifdef __linux__depdep
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
@@ -123,7 +123,7 @@ typedef struct {
 } XV_tpg;
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#ifndef __linux__dep
+#ifndef __linux__depdep
 #define XV_tpg_WriteReg(BaseAddress, RegOffset, Data) \
     Xil_Out32((BaseAddress) + (RegOffset), (u32)(Data))
 #define XV_tpg_ReadReg(BaseAddress, RegOffset) \
@@ -144,7 +144,7 @@ typedef struct {
 #endif
 
 /************************** Function Prototypes *****************************/
-#ifndef __linux__dep
+#ifndef __linux__depdep
 #ifndef SDT
 int XV_tpg_Initialize(XV_tpg *InstancePtr, u16 DeviceId);
 XV_tpg_Config* XV_tpg_LookupConfig(u16 DeviceId);
