@@ -20,7 +20,7 @@
 
 /******************************************************************/
 
-#define XPAR_XGPIO_NUM_INSTANCES 1
+#define XPAR_XGPIO_NUM_INSTANCES 2
 
 /* Definitions for peripheral SYS_CONFIG_VERSION_CHECK */
 #define XPAR_SYS_CONFIG_VERSION_CHECK_COMPATIBLE "xlnx,axi-gpio-2.0"
@@ -37,6 +37,22 @@
 #define XPAR_XGPIO_0_GPIO_WIDTH 0x1
 #define XPAR_XGPIO_0_INTERRUPT_PRESENT 0x0
 #define XPAR_XGPIO_0_IS_DUAL 0x0
+
+/* Definitions for peripheral AXI_GPIO_0 */
+#define XPAR_AXI_GPIO_0_COMPATIBLE "xlnx,axi-gpio-2.0"
+#define XPAR_AXI_GPIO_0_BASEADDR 0x40030000
+#define XPAR_AXI_GPIO_0_HIGHADDR 0x4003ffff
+#define XPAR_AXI_GPIO_0_INTERRUPT_PRESENT 0x0
+#define XPAR_AXI_GPIO_0_IS_DUAL 0x0
+#define XPAR_AXI_GPIO_0_GPIO_WIDTH 0x1
+
+/* Canonical definitions for peripheral AXI_GPIO_0 */
+#define XPAR_XGPIO_1_BASEADDR 0x40030000
+#define XPAR_XGPIO_1_HIGHADDR 0x4003ffff
+#define XPAR_XGPIO_1_COMPATIBLE "xlnx,axi-gpio-2.0"
+#define XPAR_XGPIO_1_GPIO_WIDTH 0x1
+#define XPAR_XGPIO_1_INTERRUPT_PRESENT 0x0
+#define XPAR_XGPIO_1_IS_DUAL 0x0
 
 #define XPAR_XSYSMON_NUM_INSTANCES 1
 
@@ -67,5 +83,43 @@
 #define XPAR_XTMRCTR_0_HIGHADDR 0x4001ffff
 #define XPAR_XTMRCTR_0_COMPATIBLE "xlnx,axi-timer-2.0"
 #define XPAR_XTMRCTR_0_CLOCK_FREQUENCY 0x5f5e100
+
+#define XPAR_XV_TPG_NUM_INSTANCES 1
+
+/* Definitions for peripheral V_TPG_0 */
+#define XPAR_V_TPG_0_COMPATIBLE "xlnx,v-tpg-8.2"
+#define XPAR_V_TPG_0_BASEADDR 0x40040000
+#define XPAR_V_TPG_0_HIGHADDR 0x4004ffff
+#define XPAR_V_TPG_0_AXI4S_SLAVE 0x0
+#define XPAR_V_TPG_0_SAMPLES_PER_CLOCK 0x2
+#define XPAR_V_TPG_0_NUM_VIDEO_COMPONENTS 0x3
+#define XPAR_V_TPG_0_MAX_COLS 0x1000
+#define XPAR_V_TPG_0_MAX_ROWS 0x870
+#define XPAR_V_TPG_0_MAX_DATA_WIDTH 0xa
+#define XPAR_V_TPG_0_SOLID_COLOR 0x1
+#define XPAR_V_TPG_0_RAMP 0x1
+#define XPAR_V_TPG_0_COLOR_BAR 0x1
+#define XPAR_V_TPG_0_DISPLAY_PORT 0x1
+#define XPAR_V_TPG_0_COLOR_SWEEP 0x1
+#define XPAR_V_TPG_0_ZONE_PLATE 0x1
+#define XPAR_V_TPG_0_FOREGROUND 0x1
+
+/* Canonical definitions for peripheral V_TPG_0 */
+#define XPAR_XV_TPG_0_BASEADDR 0x40040000
+#define XPAR_XV_TPG_0_HIGHADDR 0x4004ffff
+#define XPAR_XV_TPG_0_AXI4S_SLAVE 0x0
+#define XPAR_XV_TPG_0_COMPATIBLE "xlnx,v-tpg-8.2"
+#define XPAR_XV_TPG_0_COLOR_BAR 0x1
+#define XPAR_XV_TPG_0_COLOR_SWEEP 0x1
+#define XPAR_XV_TPG_0_DISPLAY_PORT 0x1
+#define XPAR_XV_TPG_0_FOREGROUND 0x1
+#define XPAR_XV_TPG_0_MAX_COLS 0x1000
+#define XPAR_XV_TPG_0_MAX_ROWS 0x870
+#define XPAR_XV_TPG_0_MAX_DATA_WIDTH 0xa
+#define XPAR_XV_TPG_0_NUM_VIDEO_COMPONENTS 0x3
+#define XPAR_XV_TPG_0_RAMP 0x1
+#define XPAR_XV_TPG_0_SAMPLES_PER_CLOCK 0x2
+#define XPAR_XV_TPG_0_SOLID_COLOR 0x1
+#define XPAR_XV_TPG_0_ZONE_PLATE 0x1
 
 #endif  /* end of protection macro */

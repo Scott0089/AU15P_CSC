@@ -18,6 +18,8 @@
 #include "xgpio.h"
 #include "xsysmon.h"
 #include "xtmrctr.h"
+#include "xv_tpg.h"
+#include "xvidc.h"
 
 /* Device configuration */
 #define TARGET_PHYS_ADDR 0x40000000

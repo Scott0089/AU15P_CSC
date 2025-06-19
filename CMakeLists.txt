@@ -9,7 +9,7 @@ project(${PROJECT_NAME}
 )
 
 add_definitions(-DSDT)
-add_definitions(-U__linux__)
+add_definitions(-U__linux__dep)
 
 # Set C standard
 set(CMAKE_C_STANDARD 11)
@@ -63,4 +63,4 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # Enable testing
-enable_testing() 
+enable_testing()

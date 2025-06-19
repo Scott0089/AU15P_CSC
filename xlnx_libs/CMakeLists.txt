@@ -11,6 +11,8 @@ file(GLOB_RECURSE XLNX_LIB_SRC
     ${SRC_DIR}/gpio/*.c
     ${SRC_DIR}/sysmon/*.c
     ${SRC_DIR}/tmrctr/*.c
+    ${SRC_DIR}/v_tpg/*.c
+    ${SRC_DIR}/video_common/*.c
 )
 
 # Create the static library
@@ -26,6 +28,8 @@ target_include_directories(xlnx_libs PUBLIC
     ${SRC_DIR}/gpio
     ${SRC_DIR}/sysmon
     ${SRC_DIR}/tmrctr
+    ${SRC_DIR}/v_tpg
+    ${SRC_DIR}/video_common
     ${SC_LIBS_DIR}
     ${PROJECT_ROOT}
 )
