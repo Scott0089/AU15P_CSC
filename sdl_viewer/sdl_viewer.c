@@ -32,9 +32,19 @@ static void yuv2rgb(uint16_t y, uint16_t u, uint16_t v, uint8_t* r, uint8_t* g, 
     *b = bb < 0 ? 0 : bb > 255 ? 255 : bb;
 }
 
-int main() {
+int main(int argc, char **argv) {
     struct stat st;
     ino_t last_inode = 0;
+    bool rgb_mode = false;
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--rgb") == 0) {
+            rgb_mode = true;
+        } else {
+            fprintf(stderr, "Unknown argument: %s\n", argv[i]);
+            fprintf(stderr, "Usage: %s [--rgb]\n", argv[0]);
+            return 1;
+        }
+    }
 
     int fd = open("/dev/shm/xdma_buffer", O_RDONLY);
     if (fd < 0) {
@@ -96,27 +106,53 @@ int main() {
             counter_after = *(volatile uint32_t *)yuv;
         } while (counter_before != counter_after || counter_before % 2 != 0);
 
-        // Convert YUV422 10-bit packed to RGB using local_frame
-        int idx = 0;
-        for (int y = 0; y < HEIGHT; ++y) {
-            for (int x = 0; x < WIDTH; x += 2) {
-                uint64_t val;
-                memcpy(&val, local_frame + idx, 8);
-                uint16_t Y0 = (val >> 0) & 0x3FF;
-                uint16_t U0 = (val >> 10) & 0x3FF;
-                uint16_t Y1 = (val >> 20) & 0x3FF;
-                uint16_t V0 = (val >> 30) & 0x3FF;
-                uint8_t r, g, b;
-                yuv2rgb(Y0, U0, V0, &r, &g, &b);
-                int pix_idx = (y * WIDTH + x) * 3;
-                rgb_frame[pix_idx + 0] = r;
-                rgb_frame[pix_idx + 1] = g;
-                rgb_frame[pix_idx + 2] = b;
-                yuv2rgb(Y1, U0, V0, &r, &g, &b);
-                rgb_frame[pix_idx + 3] = r;
-                rgb_frame[pix_idx + 4] = g;
-                rgb_frame[pix_idx + 5] = b;
-                idx += 8;
+        if (rgb_mode) {
+            // Convert 10-bit RGB packed (2 pixels per 64 bits, 4 padding bits at end) to 8-bit RGB
+            int idx = 0;
+            for (int y = 0; y < HEIGHT; ++y) {
+                for (int x = 0; x < WIDTH; x += 2) {
+                    uint64_t val;
+                    memcpy(&val, local_frame + idx, 8);
+                    uint16_t R0 = (val >> 0) & 0x3FF;
+                    uint16_t G0 = (val >> 10) & 0x3FF;
+                    uint16_t B0 = (val >> 20) & 0x3FF;
+                    uint16_t R1 = (val >> 30) & 0x3FF;
+                    uint16_t G1 = (val >> 40) & 0x3FF;
+                    uint16_t B1 = (val >> 50) & 0x3FF;
+                    // 4 bits padding at bits 60-63
+                    int pix_idx = (y * WIDTH + x) * 3;
+                    rgb_frame[pix_idx + 0] = (R0 * 255) / 1023;
+                    rgb_frame[pix_idx + 1] = (G0 * 255) / 1023;
+                    rgb_frame[pix_idx + 2] = (B0 * 255) / 1023;
+                    rgb_frame[pix_idx + 3] = (R1 * 255) / 1023;
+                    rgb_frame[pix_idx + 4] = (G1 * 255) / 1023;
+                    rgb_frame[pix_idx + 5] = (B1 * 255) / 1023;
+                    idx += 8;
+                }
+            }
+        } else {
+            // Convert YUV422 10-bit packed to RGB using local_frame
+            int idx = 0;
+            for (int y = 0; y < HEIGHT; ++y) {
+                for (int x = 0; x < WIDTH; x += 2) {
+                    uint64_t val;
+                    memcpy(&val, local_frame + idx, 8);
+                    uint16_t Y0 = (val >> 0) & 0x3FF;
+                    uint16_t U0 = (val >> 10) & 0x3FF;
+                    uint16_t Y1 = (val >> 20) & 0x3FF;
+                    uint16_t V0 = (val >> 30) & 0x3FF;
+                    uint8_t r, g, b;
+                    yuv2rgb(Y0, U0, V0, &r, &g, &b);
+                    int pix_idx = (y * WIDTH + x) * 3;
+                    rgb_frame[pix_idx + 0] = r;
+                    rgb_frame[pix_idx + 1] = g;
+                    rgb_frame[pix_idx + 2] = b;
+                    yuv2rgb(Y1, U0, V0, &r, &g, &b);
+                    rgb_frame[pix_idx + 3] = r;
+                    rgb_frame[pix_idx + 4] = g;
+                    rgb_frame[pix_idx + 5] = b;
+                    idx += 8;
+                }
             }
         }
 

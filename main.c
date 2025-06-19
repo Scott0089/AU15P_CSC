@@ -25,6 +25,10 @@ XV_tpg_Config *tpg_ConfigPtr;
 XVprocSs vprocInst;
 XVprocSs_Config *vproc_ConfigPtr;
 
+XVidC_VideoMode resId;
+XVidC_VideoTiming const *timingPtr;
+XVidC_VideoStream streamIn, streamOut;
+
 uint32_t TpgInit()
 {
     uint32_t status;
@@ -77,6 +81,53 @@ uint32_t TpgInit()
 uint32_t VProcInit()
 {
 
+    uint32_t status;
+
+    vproc_ConfigPtr = XVprocSs_LookupConfig(XPAR_XVPROCSS_0_BASEADDR);
+    if(vproc_ConfigPtr == NULL)
+    {
+        perror("Failed to get Video Processing Config! \r\n");
+        return XST_FAILURE;
+    }
+
+    status = XVprocSs_CfgInitialize(&vprocInst, vproc_ConfigPtr, vproc_ConfigPtr->BaseAddress);
+    if(status != XST_SUCCESS)
+    {
+        perror("Failed to Init Video Processing Subsystem! \r\n");
+        return XST_FAILURE;
+    }
+
+    resId = XVidC_GetVideoModeId(FRAME_WIDTH, FRAME_HEIGHT, XVIDC_FR_60HZ, 0);
+    timingPtr = XVidC_GetTimingInfo(resId);
+
+    streamIn.VmId = resId;
+    streamIn.Timing = *timingPtr;
+    streamIn.ColorFormatId = XVIDC_CSF_YCRCB_422;
+    streamIn.ColorDepth = vproc_ConfigPtr->ColorDepth;
+    streamIn.PixPerClk = vproc_ConfigPtr->PixPerClock;
+    streamIn.FrameRate = XVIDC_FR_60HZ;
+    streamIn.IsInterlaced = 0x00;
+    XVprocSs_SetVidStreamIn(&vprocInst, &streamIn);
+
+    streamOut.VmId = resId;
+    streamOut.Timing = *timingPtr;
+    streamOut.ColorFormatId = XVIDC_CSF_RGB;
+    streamOut.ColorDepth = vproc_ConfigPtr->ColorDepth;
+    streamOut.PixPerClk = vproc_ConfigPtr->PixPerClock;
+    streamOut.FrameRate = XVIDC_FR_60HZ;
+    streamOut.IsInterlaced = 0x00;
+    XVprocSs_SetVidStreamOut(&vprocInst, &streamOut);
+
+    status = XVprocSs_SetSubsystemConfig(&vprocInst);
+    if(status != XST_SUCCESS)
+    {
+        perror("Failed to Start Video Processing Subsystem! \r\n");
+        return XST_FAILURE;
+    }
+
+    printf("Video Processing Subsystem Started! \r\n");
+    
+    return status;
 }
 
 uint32_t Producer() {
@@ -187,7 +238,9 @@ int main()
 
     XGpio_DiscreteWrite(&TpgReset, 0x01, 0x01);
 
+
     TpgInit();
+    VProcInit();
 
     Producer();
 
