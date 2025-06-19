@@ -141,7 +141,7 @@ int main() {
             if (e.type == SDL_QUIT) quit = true;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) quit = true;
         }
-        SDL_Delay(10); // ~100 FPS cap, adjust as needed
+        //SDL_Delay(10); // ~100 FPS cap, adjust as needed
     }
 
     free(rgb_frame);

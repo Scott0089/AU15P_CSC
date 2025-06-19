@@ -130,8 +130,8 @@ uint32_t Producer() {
             if (write(out_fd, buffer, TOTAL_SIZE) != TOTAL_SIZE) {
                 perror("Failed to write full frame to shared memory");
             } else {
-                printf("Wrote 1 YUV422 frame (%d bytes, %d words) to shared memory. Frame counter: %u\n",
-                       FRAME_SIZE_BYTES, TOTAL_WORDS, *frame_counter);
+                //printf("Wrote 1 YUV422 frame (%d bytes, %d words) to shared memory. Frame counter: %u\n",
+                //       FRAME_SIZE_BYTES, TOTAL_WORDS, *frame_counter);
             }
         }
     }
@@ -141,7 +141,6 @@ uint32_t Producer() {
     free(buffer);
     return 0;
 }
-
 
 int main()
 {
