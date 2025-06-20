@@ -13,7 +13,7 @@
 #define WIDTH 1920
 #define HEIGHT 1080
 #define HEADER_SIZE 4
-#define FRAME_SIZE_BYTES ((WIDTH * HEIGHT / 2) * 8)
+#define FRAME_SIZE_BYTES ((WIDTH * HEIGHT / 2) * 5)
 #define TOTAL_SIZE (HEADER_SIZE + FRAME_SIZE_BYTES)
 
 // Convert 10-bit YUV to 8-bit RGB
@@ -32,8 +32,8 @@ static void yuv2rgb(uint16_t y, uint16_t u, uint16_t v, uint8_t* r, uint8_t* g, 
     *b = bb < 0 ? 0 : bb > 255 ? 255 : bb;
 }
 
-int main(int argc, char **argv) {
-    struct stat st;
+int main(int argc, char **argv)
+{
     ino_t last_inode = 0;
     bool rgb_mode = false;
     for (int i = 1; i < argc; ++i) {
@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
     double fps = 0.0;
     time_t last_time = time(NULL);
     char window_title[128];
+    static uint32_t last_counter = 0;
     while (!quit) {
         uint32_t counter_before, counter_after;
         do {
@@ -104,6 +105,10 @@ int main(int argc, char **argv) {
             if (counter_before % 2 != 0) continue; // Producer is writing
             memcpy(local_frame, yuv + HEADER_SIZE, FRAME_SIZE_BYTES);
             counter_after = *(volatile uint32_t *)yuv;
+            if (counter_before != last_counter) {
+                printf("Frame counter: %u\n", counter_before);
+                last_counter = counter_before;
+            }
         } while (counter_before != counter_after || counter_before % 2 != 0);
 
         if (rgb_mode) {
@@ -111,7 +116,7 @@ int main(int argc, char **argv) {
             int idx = 0;
             for (int y = 0; y < HEIGHT; ++y) {
                 for (int x = 0; x < WIDTH; x += 2) {
-                    uint64_t val;
+                    uint64_t val = 0;
                     memcpy(&val, local_frame + idx, 8);
                     uint16_t R0 = (val >> 0) & 0x3FF;
                     uint16_t G0 = (val >> 10) & 0x3FF;
@@ -135,8 +140,8 @@ int main(int argc, char **argv) {
             int idx = 0;
             for (int y = 0; y < HEIGHT; ++y) {
                 for (int x = 0; x < WIDTH; x += 2) {
-                    uint64_t val;
-                    memcpy(&val, local_frame + idx, 8);
+                    uint64_t val = 0;
+                    memcpy(&val, local_frame + idx, 5);
                     uint16_t Y0 = (val >> 0) & 0x3FF;
                     uint16_t U0 = (val >> 10) & 0x3FF;
                     uint16_t Y1 = (val >> 20) & 0x3FF;
@@ -151,7 +156,7 @@ int main(int argc, char **argv) {
                     rgb_frame[pix_idx + 3] = r;
                     rgb_frame[pix_idx + 4] = g;
                     rgb_frame[pix_idx + 5] = b;
-                    idx += 8;
+                    idx += 5;
                 }
             }
         }
@@ -166,7 +171,15 @@ int main(int argc, char **argv) {
         time_t now = time(NULL);
         if (now != last_time) {
             fps = frame_count / difftime(now, last_time);
-            snprintf(window_title, sizeof(window_title), "YUV422 10-bit Video - FPS: %.1f", fps);
+            if(rgb_mode)
+            {
+                snprintf(window_title, sizeof(window_title), "RGB 10-bit Video - FPS: %.1f", fps);
+            }
+            else
+            {
+                snprintf(window_title, sizeof(window_title), "YUV422 10-bit Video - FPS: %.1f", fps);
+            }
+            
             SDL_SetWindowTitle(win, window_title);
             frame_count = 0;
             last_time = now;

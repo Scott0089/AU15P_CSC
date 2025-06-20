@@ -1,16 +1,20 @@
 #include "main.h"
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define FRAME_WIDTH 1920
 #define FRAME_HEIGHT 1080
 #define PIXELS_PER_WORD 2
-#define WORD_SIZE 8 // 64 bits = 8 bytes
+#define WORD_SIZE 5 // 40 bits = 5 bytes
 #define TOTAL_PIXELS (FRAME_WIDTH * FRAME_HEIGHT)
 #define TOTAL_WORDS (TOTAL_PIXELS / PIXELS_PER_WORD)
 #define HEADER_SIZE 4
 #define FRAME_SIZE_BYTES (TOTAL_WORDS * WORD_SIZE)
 #define TOTAL_SIZE (HEADER_SIZE + FRAME_SIZE_BYTES)
 
-#define SHM_PATH "/dev/shm/xdma_buffer"
+#define SHM_PATH "/xdma_buffer"
 #define XDMA_PATH "/dev/xdma0_c2h_0"
 
 /* Global variables */
@@ -59,13 +63,13 @@ uint32_t TpgInit()
     XV_tpg_Set_width(&tpgInst, FRAME_WIDTH);
     XV_tpg_Set_colorFormat(&tpgInst, XVIDC_CSF_YCRCB_422);
     XV_tpg_Set_maskId(&tpgInst, 0x00);
-    XV_tpg_Set_motionSpeed(&tpgInst, 5);
+    XV_tpg_Set_motionSpeed(&tpgInst, 1);
     XV_tpg_Set_motionEn(&tpgInst, 1);
     XV_tpg_Set_bckgndId(&tpgInst, XTPG_BKGND_COLOR_BARS);
     
-    XV_tpg_Set_boxColorB(&tpgInst, 0x50);
-    XV_tpg_Set_boxColorR(&tpgInst, 0x50);
-    XV_tpg_Set_boxColorG(&tpgInst, 0x50);
+    XV_tpg_Set_boxColorB(&tpgInst, 0xFF);
+    XV_tpg_Set_boxColorR(&tpgInst, 0xFF);
+    XV_tpg_Set_boxColorG(&tpgInst, 0xFF);
     XV_tpg_Set_boxSize(&tpgInst, 50);
     
     XV_tpg_Set_ovrlayId(&tpgInst, 0x01);
@@ -111,7 +115,7 @@ uint32_t VProcInit()
 
     streamOut.VmId = resId;
     streamOut.Timing = *timingPtr;
-    streamOut.ColorFormatId = XVIDC_CSF_RGB;
+    streamOut.ColorFormatId = XVIDC_CSF_YCRCB_422;
     streamOut.ColorDepth = vproc_ConfigPtr->ColorDepth;
     streamOut.PixPerClk = vproc_ConfigPtr->PixPerClock;
     streamOut.FrameRate = XVIDC_FR_60HZ;
@@ -131,41 +135,52 @@ uint32_t VProcInit()
 }
 
 uint32_t Producer() {
-    int in_fd, out_fd;
+    int in_fd, shm_fd;
     ssize_t bytes_read, total_read;
-    uint8_t *buffer = malloc(TOTAL_SIZE);
-
-    if (!buffer) {
-        perror("malloc failed");
-        return 1;
-    }
-    uint32_t *frame_counter = (uint32_t *)buffer;
-    uint8_t *frame_data = buffer + HEADER_SIZE;
+    uint8_t *shm_ptr;
 
     // Open XDMA input device
     in_fd = open(XDMA_PATH, O_RDONLY);
     if (in_fd < 0) {
         perror("Failed to open XDMA input");
-        free(buffer);
         return 1;
     }
 
-    // Create and open shared memory output file
-    out_fd = open(SHM_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    if (out_fd < 0) {
-        perror("Failed to open shared memory file");
+    // Create and open shared memory object
+    shm_fd = shm_open(SHM_PATH, O_CREAT | O_RDWR, 0666);
+    if (shm_fd < 0) {
+        perror("Failed to open shared memory object");
         close(in_fd);
-        free(buffer);
         return 1;
     }
 
+    // Set size of shared memory
+    if (ftruncate(shm_fd, TOTAL_SIZE) == -1) {
+        perror("Failed to set size of shared memory");
+        close(in_fd);
+        close(shm_fd);
+        return 1;
+    }
+
+    // Map shared memory
+    shm_ptr = mmap(NULL, TOTAL_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (shm_ptr == MAP_FAILED) {
+        perror("Failed to mmap shared memory");
+        close(in_fd);
+        close(shm_fd);
+        return 1;
+    }
+
+    uint32_t *frame_counter = (uint32_t *)shm_ptr;
+    uint8_t *frame_data = shm_ptr + HEADER_SIZE;
     *frame_counter = 0; // Initialize frame counter
 
-    while(1)
-    {
+    while (1) {
         total_read = 0;
-        // 1. Increment counter to odd (writing)
-        (*frame_counter)++;
+
+        // 1. Set counter to odd (writing)
+        // Only increment counter if we are about to write a new frame
+        // (move this after successful read)
 
         // 2. Read one full frame into frame_data
         while (total_read < FRAME_SIZE_BYTES) {
@@ -181,23 +196,23 @@ uint32_t Producer() {
         }
 
         if (total_read == FRAME_SIZE_BYTES) {
-            // 3. Increment counter to even (ready)
+            // 1. Set counter to odd (writing)
             (*frame_counter)++;
+            __sync_synchronize(); // Memory barrier
 
-            // 4. Write the whole buffer to shared memory
-            lseek(out_fd, 0, SEEK_SET);
-            if (write(out_fd, buffer, TOTAL_SIZE) != TOTAL_SIZE) {
-                perror("Failed to write full frame to shared memory");
-            } else {
-                //printf("Wrote 1 YUV422 frame (%d bytes, %d words) to shared memory. Frame counter: %u\n",
-                //       FRAME_SIZE_BYTES, TOTAL_WORDS, *frame_counter);
-            }
+            // 3. Set counter to even (ready)
+            (*frame_counter)++;
+            __sync_synchronize(); // Memory barrier
+            printf("Frame written, counter: %u\n", *frame_counter);
+        } else {
+            // If we didn't get a full frame, don't update the counter
+            printf("Failed to read a full frame from XDMA (read %zd bytes)\n", total_read);
         }
     }
 
+    munmap(shm_ptr, TOTAL_SIZE);
     close(in_fd);
-    close(out_fd);
-    free(buffer);
+    close(shm_fd);
     return 0;
 }
 
