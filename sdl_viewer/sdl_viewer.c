@@ -13,7 +13,7 @@
 #define WIDTH 1920
 #define HEIGHT 1080
 #define HEADER_SIZE 4
-#define FRAME_SIZE_BYTES ((WIDTH * HEIGHT / 2) * 5)
+#define FRAME_SIZE_BYTES ((WIDTH * HEIGHT / 2) * 8)
 #define TOTAL_SIZE (HEADER_SIZE + FRAME_SIZE_BYTES)
 
 // Convert 10-bit YUV to 8-bit RGB
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
             for (int y = 0; y < HEIGHT; ++y) {
                 for (int x = 0; x < WIDTH; x += 2) {
                     uint64_t val = 0;
-                    memcpy(&val, local_frame + idx, 5);
+                    memcpy(&val, local_frame + idx, 8);
                     uint16_t Y0 = (val >> 0) & 0x3FF;
                     uint16_t U0 = (val >> 10) & 0x3FF;
                     uint16_t Y1 = (val >> 20) & 0x3FF;
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
                     rgb_frame[pix_idx + 3] = r;
                     rgb_frame[pix_idx + 4] = g;
                     rgb_frame[pix_idx + 5] = b;
-                    idx += 5;
+                    idx += 8;
                 }
             }
         }

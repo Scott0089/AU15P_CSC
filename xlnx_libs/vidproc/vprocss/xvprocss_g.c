@@ -4,8 +4,8 @@ XVprocSs_Config XVprocSs_ConfigTable[] __attribute__ ((section (".drvcfg_sec")))
 
 	{
 		"xlnx,v-proc-ss-2.3", /* compatible */
-		0x40050000, /* reg */
-		0x4005ffff, /* xlnx,highaddr */
+		0x400d0000, /* reg */
+		0x400dffff, /* xlnx,highaddr */
 		0x3, /* xlnx,topology */
 		0x2, /* xlnx,samples-per-clk */
 		0xa, /* xlnx,max-data-width */

@@ -9,10 +9,12 @@ set(PROJECT_ROOT ${SRC_DIR}/..)
 file(GLOB_RECURSE XLNX_LIB_SRC
     ${SRC_DIR}/standalone/*.c
     ${SRC_DIR}/gpio/*.c
+    ${SRC_DIR}/iic/*.c
     ${SRC_DIR}/sysmon/*.c
     ${SRC_DIR}/tmrctr/*.c
     ${SRC_DIR}/v_tpg/*.c
     ${SRC_DIR}/video_common/*.c
+    ${SRC_DIR}/vtc/*.c
     
     ${SRC_DIR}/vidproc/axis_switch/*.c
     ${SRC_DIR}/vidproc/axivdma/*.c
@@ -25,6 +27,12 @@ file(GLOB_RECURSE XLNX_LIB_SRC
     ${SRC_DIR}/vidproc/v_vscaler/*.c
     ${SRC_DIR}/vidproc/vprocss/*.c
     ${SRC_DIR}/vidproc/vprocss/vdma/*.c
+
+    ${SRC_DIR}/sdi_common/*.c
+    ${SRC_DIR}/v_sdirx/*.c
+    ${SRC_DIR}/v_sdirxss/*.c
+    ${SRC_DIR}/v_sditx/*.c
+    ${SRC_DIR}/v_sditxss/*.c
 )
 
 # Create the static library
@@ -38,10 +46,12 @@ target_include_directories(xlnx_libs PUBLIC
     ${SRC_DIR}/standalone
     ${SRC_DIR}/hw_config
     ${SRC_DIR}/gpio
+    ${SRC_DIR}/iic
     ${SRC_DIR}/sysmon
     ${SRC_DIR}/tmrctr
     ${SRC_DIR}/v_tpg
     ${SRC_DIR}/video_common
+    ${SRC_DIR}/vtc
     
     ${SRC_DIR}/vidproc
     ${SRC_DIR}/vidproc/axis_switch
@@ -55,6 +65,12 @@ target_include_directories(xlnx_libs PUBLIC
     ${SRC_DIR}/vidproc/v_vscaler
     ${SRC_DIR}/vidproc/vprocss
     ${SRC_DIR}/vidproc/vprocss/vdma
+
+    ${SRC_DIR}/sdi_common
+    ${SRC_DIR}/v_sdirx
+    ${SRC_DIR}/v_sdirxss
+    ${SRC_DIR}/v_sditx
+    ${SRC_DIR}/v_sditxss
    
     
     ${SC_LIBS_DIR}

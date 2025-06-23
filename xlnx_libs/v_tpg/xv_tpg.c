@@ -8,7 +8,7 @@
 #include "xv_tpg.h"
 
 /************************** Function Implementation *************************/
-#ifndef __linux__depdep
+#ifndef __linux__dep
 int XV_tpg_CfgInitialize(XV_tpg *InstancePtr,
                          XV_tpg_Config *ConfigPtr,
                          UINTPTR EffectiveAddr) {

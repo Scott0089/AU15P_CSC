@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MIT
 // ==============================================================
 
-#ifndef __linux__depdep
+#ifndef __linux__dep
 
 #include "xstatus.h"
 #ifndef SDT

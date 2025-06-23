@@ -9,7 +9,7 @@ project(${PROJECT_NAME}
 )
 
 add_definitions(-DSDT)
-add_definitions(-U__linux__depdep)
+add_definitions(-U__linux__depdepdep)
 
 # Set C standard
 set(CMAKE_C_STANDARD 11)

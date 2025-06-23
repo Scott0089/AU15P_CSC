@@ -1,6 +1,6 @@
 # AUBoard AU15P Color Space Conversion Demo
 
-Demo Project using the AUBoard AU15P to Change the Color Space of TPG Video.
+Demo Project using the AUBoard AU15P to Change the Color Space of SDI Rx Video.
 
 ## Prerequisites
 
