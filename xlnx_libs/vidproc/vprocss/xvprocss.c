@@ -1211,6 +1211,7 @@ static int ValidateCscOnlyConfig(XVprocSs *XVprocSsPtr,
     XVprocSs_LogWrite(XVprocSsPtr, XVPROCSS_EVT_CFG_CSC, XVPROCSS_EDAT_VDIFF);
     return(XST_FAILURE);
   }
+  printf("help");
 
   XVprocSs_LogWrite(XVprocSsPtr, XVPROCSS_EVT_CFG_CSC, XVPROCSS_EDAT_VALID);
   return(XST_SUCCESS);
@@ -1469,6 +1470,8 @@ static int SetupModeCscOnly(XVprocSs *XVprocSsPtr)
 
   Allow422 = XV_CscIs422Enabled(XVprocSsPtr->CscPtr);
   Allow420 = XV_CscIs420Enabled(XVprocSsPtr->CscPtr);
+
+  printf("%d %d \r\n", Allow422, Allow420);
 
   /* check if input/output stream configuration is supported */
   status = ValidateCscOnlyConfig(XVprocSsPtr, Allow422, Allow420);

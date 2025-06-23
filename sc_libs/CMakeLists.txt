@@ -24,10 +24,12 @@ target_include_directories(sc_libs
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/standalone
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/hw_config
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/gpio
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/iic
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/sysmon
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/tmrctr
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_tpg
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/video_common
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vtc
         
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/axis_switch
@@ -41,6 +43,12 @@ target_include_directories(sc_libs
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/v_vscaler
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/vprocss
         ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/vidproc/vprocss/vdma
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/sdi_common
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_sdirx
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_sdirxss
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_sditx
+        ${CMAKE_CURRENT_SOURCE_DIR}/../xlnx_libs/v_sditxss
         
         ${CMAKE_CURRENT_SOURCE_DIR}/..
 )

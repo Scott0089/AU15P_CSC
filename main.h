@@ -14,13 +14,22 @@
 /* Project includes */
 #include "xstatus.h"
 #include "sc_io.h"
+#include "idt_8t49n24x.h"
 
 #include "xgpio.h"
+#include "xiic.h"
 #include "xsysmon.h"
 #include "xtmrctr.h"
 #include "xv_tpg.h"
 #include "xvidc.h"
 #include "xvprocss.h"
+
+#include "xv_sditx.h"
+#include "xv_sditxss.h"
+#include "xvtc.h"
+#include "xv_sdirx.h"
+#include "xv_sdirxss.h"
+
 
 /* Device configuration */
 #define TARGET_PHYS_ADDR 0x40000000
