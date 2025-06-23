@@ -40,7 +40,7 @@ XVprocSs_Config *vproc_ConfigPtr;
 
 XVidC_VideoMode resId;
 XVidC_VideoTiming const *timingPtr;
-XVidC_VideoStream streamIn, streamOut;
+XVidC_VideoStream *streamOut;
 
 XV_SdiTxSs  sdiTxSsInst;
 XV_SdiTx_Config *sdiTxSs_ConfigPtr;
@@ -207,98 +207,6 @@ uint32_t HW_Init()
     TpgInit();
 
     return XST_SUCCESS;
-}
-
-uint32_t VProcInit()
-{
-
-    uint32_t status;
-
-    vproc_ConfigPtr = XVprocSs_LookupConfig(XPAR_XVPROCSS_0_BASEADDR);
-    if(vproc_ConfigPtr == NULL)
-    {
-        perror("Failed to get Video Processing Config! \r\n");
-        return XST_FAILURE;
-    }
-
-    status = XVprocSs_CfgInitialize(&vprocInst, vproc_ConfigPtr, vproc_ConfigPtr->BaseAddress);
-    if(status != XST_SUCCESS)
-    {
-        perror("Failed to Init Video Processing Subsystem! \r\n");
-        return XST_FAILURE;
-    }
-
-    resId = XVidC_GetVideoModeId(FRAME_WIDTH, FRAME_HEIGHT, XVIDC_FR_60HZ, 0);
-    timingPtr = XVidC_GetTimingInfo(resId);
-
-    streamIn.VmId = resId;
-    streamIn.Timing = *timingPtr;
-    streamIn.ColorFormatId = XVIDC_CSF_YCRCB_422;
-    streamIn.ColorDepth = vproc_ConfigPtr->ColorDepth;
-    streamIn.PixPerClk = vproc_ConfigPtr->PixPerClock;
-    streamIn.FrameRate = XVIDC_FR_60HZ;
-    streamIn.IsInterlaced = 0x00;
-    XVprocSs_SetVidStreamIn(&vprocInst, &streamIn);
-
-    streamOut.VmId = resId;
-    streamOut.Timing = *timingPtr;
-    streamOut.ColorFormatId = XVIDC_CSF_YCRCB_422;
-    streamOut.ColorDepth = vproc_ConfigPtr->ColorDepth;
-    streamOut.PixPerClk = vproc_ConfigPtr->PixPerClock;
-    streamOut.FrameRate = XVIDC_FR_60HZ;
-    streamOut.IsInterlaced = 0x00;
-    XVprocSs_SetVidStreamOut(&vprocInst, &streamOut);
-
-    status = XVprocSs_SetSubsystemConfig(&vprocInst);
-    if(status != XST_SUCCESS)
-    {
-        perror("Failed to Start Video Processing Subsystem! \r\n");
-        return XST_FAILURE;
-    }
-
-    printf("Video Processing Subsystem Started! \r\n");
-    
-    printf("vproc_ConfigPtr fields:\n");
-#ifndef SDT
-    printf("  DeviceId: %u\n", vproc_ConfigPtr->DeviceId);
-#else
-    printf("  Name: %s\n", vproc_ConfigPtr->Name);
-#endif
-    printf("  BaseAddress: 0x%lX\n", (unsigned long)vproc_ConfigPtr->BaseAddress);
-    printf("  HighAddress: 0x%lX\n", (unsigned long)vproc_ConfigPtr->HighAddress);
-    printf("  Topology: %u\n", vproc_ConfigPtr->Topology);
-    printf("  PixPerClock: %u\n", vproc_ConfigPtr->PixPerClock);
-    printf("  ColorDepth: %u\n", vproc_ConfigPtr->ColorDepth);
-    printf("  NumVidComponents: %u\n", vproc_ConfigPtr->NumVidComponents);
-    printf("  MaxWidth: %u\n", vproc_ConfigPtr->MaxWidth);
-    printf("  MaxHeight: %u\n", vproc_ConfigPtr->MaxHeight);
-    printf("  HasMADI: %u\n", vproc_ConfigPtr->HasMADI);
-    printf("  RstAximm.IsPresent: %u\n", vproc_ConfigPtr->RstAximm.IsPresent);
-    printf("  RstAximm.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->RstAximm.AddrOffset);
-    printf("  RstAxis.IsPresent: %u\n", vproc_ConfigPtr->RstAxis.IsPresent);
-    printf("  RstAxis.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->RstAxis.AddrOffset);
-    printf("  Vdma.IsPresent: %u\n", vproc_ConfigPtr->Vdma.IsPresent);
-    printf("  Vdma.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Vdma.AddrOffset);
-    printf("  Router.IsPresent: %u\n", vproc_ConfigPtr->Router.IsPresent);
-    printf("  Router.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Router.AddrOffset);
-    printf("  Csc.IsPresent: %u\n", vproc_ConfigPtr->Csc.IsPresent);
-    printf("  Csc.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Csc.AddrOffset);
-    printf("  Deint.IsPresent: %u\n", vproc_ConfigPtr->Deint.IsPresent);
-    printf("  Deint.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Deint.AddrOffset);
-    printf("  HCrsmplr.IsPresent: %u\n", vproc_ConfigPtr->HCrsmplr.IsPresent);
-    printf("  HCrsmplr.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->HCrsmplr.AddrOffset);
-    printf("  Hscale.IsPresent: %u\n", vproc_ConfigPtr->Hscale.IsPresent);
-    printf("  Hscale.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Hscale.AddrOffset);
-    printf("  Lbox.IsPresent: %u\n", vproc_ConfigPtr->Lbox.IsPresent);
-    printf("  Lbox.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Lbox.AddrOffset);
-    printf("  VCrsmplrIn.IsPresent: %u\n", vproc_ConfigPtr->VCrsmplrIn.IsPresent);
-    printf("  VCrsmplrIn.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->VCrsmplrIn.AddrOffset);
-    printf("  VCrsmplrOut.IsPresent: %u\n", vproc_ConfigPtr->VCrsmplrOut.IsPresent);
-    printf("  VCrsmplrOut.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->VCrsmplrOut.AddrOffset);
-    printf("  Vscale.IsPresent: %u\n", vproc_ConfigPtr->Vscale.IsPresent);
-    printf("  Vscale.AddrOffset: 0x%lX\n", (unsigned long)vproc_ConfigPtr->Vscale.AddrOffset);
-
-    return status;
 }
 
 uint32_t Producer() {
@@ -481,25 +389,13 @@ uint32_t config_sdi_rx()
     sdiRxSsVidStreamPtr = XV_SdiRxSs_GetVideoStream(&sdiRxSsInst, 0);
     timingPtr = &sdiRxSsVidStreamPtr->Timing;
 
-    streamIn.VmId = resId;
-    streamIn.Timing = *timingPtr;
-    streamIn.ColorFormatId = XVIDC_CSF_YCRCB_422;
-    streamIn.ColorDepth = vproc_ConfigPtr->ColorDepth;
-    streamIn.PixPerClk = vproc_ConfigPtr->PixPerClock;
-    streamIn.FrameRate = XVIDC_FR_60HZ;
-    streamIn.IsInterlaced = 0x00;
-
     XVidC_ReportStreamInfo(sdiRxSsVidStreamPtr);
     XVprocSs_SetVidStreamIn(&vprocInst, sdiRxSsVidStreamPtr);
 
-    streamOut.VmId = resId;
-    streamOut.Timing = *timingPtr;
-    streamOut.ColorFormatId = XVIDC_CSF_RGB;
-    streamOut.ColorDepth = vproc_ConfigPtr->ColorDepth;
-    streamOut.PixPerClk = vproc_ConfigPtr->PixPerClock;
-    streamOut.FrameRate = XVIDC_FR_60HZ;
-    streamOut.IsInterlaced = 0x00;
-    XVprocSs_SetVidStreamOut(&vprocInst, &streamOut);
+    streamOut = XV_SdiRxSs_GetVideoStream(&sdiRxSsInst, 0);
+    streamOut->ColorFormatId = XVIDC_CSF_YCRCB_422;
+
+    XVprocSs_SetVidStreamOut(&vprocInst, streamOut);
 
     printf("Input Stream: %dx%d, ColorFormat: %d, Depth: %d, PPC: %d, FR: %d, Interlaced: %d\n",
         sdiRxSsVidStreamPtr->Timing.HActive,
@@ -509,15 +405,6 @@ uint32_t config_sdi_rx()
         sdiRxSsVidStreamPtr->PixPerClk,
         sdiRxSsVidStreamPtr->FrameRate,
         sdiRxSsVidStreamPtr->IsInterlaced);
-
-    printf("Output Stream: %dx%d, ColorFormat: %d, Depth: %d, PPC: %d, FR: %d, Interlaced: %d\n",
-        streamOut.Timing.HActive,
-        streamOut.Timing.VActive,
-        streamOut.ColorFormatId,
-        streamOut.ColorDepth,
-        streamOut.PixPerClk,
-        streamOut.FrameRate,
-        streamOut.IsInterlaced);
 
     status = XVprocSs_SetSubsystemConfig(&vprocInst);
     if(status != XST_SUCCESS)

@@ -46,5 +46,4 @@ CTestTestfile.cmake
 # Project specific
 *.log
 *.bin
-*.bit
 *.hwh 
