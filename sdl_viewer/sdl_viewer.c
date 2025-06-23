@@ -118,12 +118,12 @@ int main(int argc, char **argv)
                 for (int x = 0; x < WIDTH; x += 2) {
                     uint64_t val = 0;
                     memcpy(&val, local_frame + idx, 8);
-                    uint16_t R0 = (val >> 0) & 0x3FF;
-                    uint16_t G0 = (val >> 10) & 0x3FF;
-                    uint16_t B0 = (val >> 20) & 0x3FF;
-                    uint16_t R1 = (val >> 30) & 0x3FF;
-                    uint16_t G1 = (val >> 40) & 0x3FF;
-                    uint16_t B1 = (val >> 50) & 0x3FF;
+                    uint16_t G0 = (val >> 0) & 0x3FF;
+                    uint16_t B0 = (val >> 10) & 0x3FF;
+                    uint16_t R0 = (val >> 20) & 0x3FF;
+                    uint16_t G1 = (val >> 30) & 0x3FF;
+                    uint16_t B1 = (val >> 40) & 0x3FF;
+                    uint16_t R1 = (val >> 50) & 0x3FF;
                     // 4 bits padding at bits 60-63
                     int pix_idx = (y * WIDTH + x) * 3;
                     rgb_frame[pix_idx + 0] = (R0 * 255) / 1023;

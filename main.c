@@ -543,9 +543,9 @@ void start_sdi_tx()
     XV_tpg_Set_motionEn(&tpgInst, 1);
     XV_tpg_Set_bckgndId(&tpgInst, XTPG_BKGND_COLOR_BARS);
     
-    XV_tpg_Set_boxColorB(&tpgInst, 0x50);
-    XV_tpg_Set_boxColorR(&tpgInst, 0x50);
-    XV_tpg_Set_boxColorG(&tpgInst, 0x50);
+    XV_tpg_Set_boxColorB(&tpgInst, 0x00);
+    XV_tpg_Set_boxColorR(&tpgInst, 0x00);
+    XV_tpg_Set_boxColorG(&tpgInst, 0x00);
     XV_tpg_Set_boxSize(&tpgInst, 50);
     
     XV_tpg_Set_ovrlayId(&tpgInst, 0x01);
